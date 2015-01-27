@@ -137,10 +137,10 @@ describe('Functional Query Language', function () {
    */
   it('should support select() queries that limit which values come back', function () {
     var results = moviesTable
-                    .where({rank: function (v) {return v > 8;}})
-                    .select(["id", "name"])
-                    .limit(3)
-                    .exec();
+        .where({rank: function (v) {return v > 8;}})
+        .select(["id", "name"])
+        .limit(3)
+        .exec();
     var expectedResults = [{"id":10920,"name":"Aliens"},{"id":46169,"name":"Braveheart"},{"id":109093,"name":"Fargo"}];
     expect(results).toEqual(expectedResults);
   });
@@ -194,14 +194,14 @@ describe('Functional Query Language - Level 2', function () {
     var rolesTable = new FQL(roles);
 
     var results = moviesTable
-                    .where({rank: function(v) {return v !== null;}})
-                    .order('rank')
-                    .limit(1) // this should give us Hollow Man, the lowest ranked movie
-                    .left_join(rolesTable, function(movie_row, role_row) {
-                      return movie_row.id === role_row.movie_id;
-                    })
-                    .limit(2)
-                    .exec();
+      .where({rank: function(v) {return v !== null;}})
+      .order('rank')
+      .limit(1) // this should give us Hollow Man, the lowest ranked movie
+      .left_join(rolesTable, function(movie_row, role_row) {
+        return movie_row.id === role_row.movie_id;
+      })
+      .limit(2)
+      .exec();
 
     // First 2 roles in the movie
     // you can verify this be search in the roles array for anything with movie_id === 147603
