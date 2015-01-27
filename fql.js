@@ -2,13 +2,25 @@
 
 // Adds properties of obj2 into obj1
 function merge(obj1, obj2) {
+  var obj = clone(obj1);
+
   for (var key in obj2) {
     if (obj2.hasOwnProperty(key)) {
-      obj1[key] = obj2[key];
+      obj[key] = obj2[key];
     }
   }
-  return obj1;
+  return obj;
 };
+
+function clone (obj) {
+  var new_obj = {};
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      new_obj[key] = obj[key];
+    }
+  }
+  return new_obj;
+}
 
 
 var FQL = function(table) {
@@ -71,15 +83,10 @@ FQL.prototype.left_join = function (foriegnFql, rowMatcher) {
       return rowMatcher(obj, foriegn_obj);
     });
   }).map(function(foriegn_obj) {
-    var new_obj = {};
-    Object.keys(foriegn_obj).forEach(function(key) {
-      new_obj[key] = foriegn_obj[key];
-    });
+    var new_obj;
     self.data.forEach(function(obj) {
       if (rowMatcher(obj, foriegn_obj)) {
-        Object.keys(obj).forEach(function(key) {
-          new_obj[key] = obj[key];
-        });
+        new_obj = merge(foriegn_obj, obj);
       };
     });
     return new_obj;
@@ -108,8 +115,3 @@ FQL.prototype.getIndicesOf = function (columnName, val) {
     return rtn_arr;
   }
 };
-
-FQL.prototype.nimit = function () {};
-
-
-
