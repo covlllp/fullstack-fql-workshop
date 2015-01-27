@@ -43,16 +43,40 @@ FQL.prototype.limit = function (amount) {
 };
 
 FQL.prototype.where = function (filters) {
-  var rtn_arr = this.data.filter(function(movie) {
-    var keys = Object.keys(filters);
-    return keys.every(function(key) {
-      if (typeof filters[key] == 'function') {
-        return filters[key](movie[key]);
-      } else {
-        return movie[key] == filters[key];
-      }
-    });
-  });
+  // var rtn_arr = this.data.filter(function(movie) {
+  //   var keys = Object.keys(filters);
+  //   return keys.every(function(key) {
+  //     if (typeof filters[key] == 'function') {
+  //       return filters[key](movie[key]);
+  //     } else {
+  //       return movie[key] == filters[key];
+  //     }
+  //   });
+  // });
+
+  var rtn_arr = this.data;
+  for (var key in filters) {
+    var valOrFunc = filters[key];
+	if (typeof valOrFunc == 'function') {
+		rtn_arr = rtn_arr.filter(function(obj) {
+		  return valOrFunc(obj[key]);
+		})
+	} else {
+		if (key == this.indexedCol) {
+			var indices = this.getIndicesOf(key, valOrFunc);
+			new_arr = [];
+			indices.forEach(function(ind) {
+				new_arr.push(rtn_arr[ind]);
+			});
+			rtn_arr = new_arr;
+		}
+		else {
+			rtn_arr = rtn_arr.filter(function(obj) {
+			  return valOrFunc == obj[key];
+			});
+		}
+	}
+  }
   return new FQL(rtn_arr);
 };
 
