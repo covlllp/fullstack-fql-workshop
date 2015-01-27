@@ -13,6 +13,8 @@ function merge(obj1, obj2) {
 
 var FQL = function(table) {
     this.data = table;
+    this.indexedData = [];
+    this.indexedCol = '';
 };
 
 FQL.prototype.exec = function () {
@@ -86,12 +88,28 @@ FQL.prototype.left_join = function (foriegnFql, rowMatcher) {
   return new FQL(rtn_arr);
 };
 
-FQL.prototype.addIndex = function (columnName) {};
+FQL.prototype.addIndex = function (key) {
+  this.indexedCol = key;
+  this.indexedData = [];
+  var self = this;
+  this.data.forEach(function(obj) {
+    self.indexedData.push(obj[key]);
+  });
+};
 
+FQL.prototype.getIndicesOf = function (columnName, val) {
+  if (this.indexedCol == columnName) {
+    var rtn_arr = [];
+    var ind = this.indexedData.indexOf(val);
+    while (ind != -1) {
+      rtn_arr.push(ind);
+      ind = this.indexedData.indexOf(val, ind + 1);
+    }
+    return rtn_arr;
+  }
+};
 
 FQL.prototype.nimit = function () {};
 
 
 
-
-FQL.prototype.getIndicesOf = function (columnName, val) {};
